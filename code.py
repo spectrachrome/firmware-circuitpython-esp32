@@ -23,30 +23,41 @@ def rainbow(delay):
 
 def acceleration():
     average = [0 for i in range(20)]
-    avg_buffer_size = 20
-    avg_i = 0
+    buffer_size = 20
+    index = 0
+
     #last = 0.0
     #current = 0.0
+
+    has_turned_red = False
 
     while True:
         (x, y, z) = accelerometer.acceleration
 
         #last = current
 
-        average[avg_i] = math.sqrt(x ** 2 + y ** 2 + z ** 2)
+        average[index] = math.sqrt(x ** 2 + y ** 2 + z ** 2)
         sum = 0.0
         for v in average:
             sum += v
         delta = sum / len(average)
-        hue = 140 - delta * 140
+
+        delta = delta - 0.3
+
+        red = round(delta * 255)
+        green = round(255 - delta * 255)
 
         #current = math.sqrt(x ** 2 + y ** 2 + (z) ** 2)
         #delta = abs(current - last)
         #hue = 90 - delta * 90
 
-        if hue < 0: hue = 0
+        led.fill((red, green, 0, 0))
 
-        led.fill(colorwheel(hue))
+        if index == buffer_size - 1:
+            index = 0
+        else:
+            index += 1
+
         time.sleep(0.05)
 
 
